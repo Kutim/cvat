@@ -11,6 +11,7 @@ RUN apt-get update && \
         git \
         libgeos-dev \
         libldap2-dev \
+        libmp3lame-dev \
         libsasl2-dev \
         make \
         nasm \
