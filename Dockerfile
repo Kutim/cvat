@@ -63,7 +63,6 @@ RUN curl -L https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz -o ffmpe
     tar -xJf ffmpeg.tar.xz --strip-components=1 && \
     ./configure --enable-nonfree --enable-gpl --enable-libopenh264 \
     --enable-libx264 --enable-libx265 \ 
-    --enable-libmp3lame --enable-libopus \
     --enable-shared --enable-static --disable-doc  --prefix="${PREFIX}" && \
     make -j5 && make install && make clean
     
