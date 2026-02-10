@@ -22,6 +22,7 @@ RUN apt-get update && \
         libxmlsec1-openssl \
         libhdf5-dev \
         cargo-1.85 \
+        xz-utils \
     && update-alternatives \
         --install /usr/bin/rustc rustc /usr/bin/rustc-1.85 185 \
         --slave /usr/bin/cargo cargo /usr/bin/cargo-1.85 \
