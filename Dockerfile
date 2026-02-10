@@ -12,6 +12,10 @@ RUN apt-get update && \
         libgeos-dev \
         libldap2-dev \
         libmp3lame-dev \
+        libx264-dev \
+        libx265-dev \
+        libvpx-dev \
+        libopus-dev \
         libsasl2-dev \
         make \
         nasm \
