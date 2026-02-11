@@ -216,6 +216,7 @@ ENV NUMPROCS=1
 COPY --from=build-image-av /opt/ffmpeg/lib /usr/lib
 COPY --from=build-image-av /opt/ffmpeg/bin/ffmpeg /usr/bin/
 COPY --from=build-image-av /opt/ffmpeg/bin/ffprobe /usr/bin/
+ENV LD_LIBRARY_PATH="/usr/lib:${LD_LIBRARY_PATH}"
 
 # These variables are required for supervisord substitutions in files
 # This library allows remote python debugging with VS Code
