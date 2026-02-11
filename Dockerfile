@@ -5,6 +5,7 @@ FROM ${BASE_IMAGE} AS build-image-base
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends install -yq \
+        build-essential \
         cmake \
         curl \
         g++ \
@@ -14,7 +15,9 @@ RUN apt-get update && \
         libldap2-dev \
         libsasl2-dev \
         make \
+        meson \
         nasm \
+        ninja-build \
         pkg-config \
         python3-dev \
         python3-pip \
@@ -24,6 +27,7 @@ RUN apt-get update && \
         libhdf5-dev \
         cargo-1.85 \
         xz-utils \
+        yasm \
     && update-alternatives \
         --install /usr/bin/rustc rustc /usr/bin/rustc-1.85 185 \
         --slave /usr/bin/cargo cargo /usr/bin/cargo-1.85 \
@@ -63,6 +67,15 @@ RUN git clone https://bitbucket.org/multicoreware/x265_git . && \
     cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=${PREFIX} ../../source && \
     make -j5 && make install && make clean
 
+# 编译 libdav1d (AV1 解码器)
+WORKDIR /tmp/dav1d
+RUN git clone https://code.videolan.org/videolan/dav1d.git . && \
+    mkdir build && cd build && \
+    meson setup --prefix=${PREFIX} --libdir=${PREFIX}/lib .. && \
+    ninja && ninja install && \
+    cd /tmp && rm -rf /tmp/dav1d
+
+
 
 WORKDIR /tmp/ffmpeg
 #RUN curl -sL https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz --output - | \
@@ -76,6 +89,7 @@ RUN curl -L https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz -o ffmpe
     tar -xJf ffmpeg.tar.xz --strip-components=1 && \
     ./configure --enable-nonfree --enable-gpl --enable-libopenh264 \
     --enable-libx264 --enable-libx265 \ 
+    --enable-libdav1d \
     --enable-shared --enable-static --disable-doc  --prefix="${PREFIX}" && \
     make -j5 && make install && make clean
 
