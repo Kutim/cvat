@@ -5,6 +5,7 @@ FROM ${BASE_IMAGE} AS build-image-base
 
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends install -yq \
+        cmake \
         curl \
         g++ \
         gcc \
@@ -47,6 +48,20 @@ WORKDIR /tmp/openh264
 RUN curl -sL https://github.com/cisco/openh264/archive/v${OPENH264_VERSION}.tar.gz --output - | \
     tar -zx --strip-components=1 && \
     make -j5 && make install-shared PREFIX=${PREFIX} && make clean
+
+# 编译 x264 
+WORKDIR /tmp/x264 
+RUN git clone https://code.videolan.org/videolan/x264.git . && \ 
+    ./configure --prefix=${PREFIX} --enable-shared && \ 
+    make -j5 && make install && make clean
+
+# 编译 x265
+WORKDIR /tmp/x265
+RUN git clone https://bitbucket.org/multicoreware/x265_git . && \
+    cd build/linux && \
+    cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=${PREFIX} ../../source && \
+    make -j5 && make install && make clean
+
 
 WORKDIR /tmp/ffmpeg
 #RUN curl -sL https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz --output - | \
