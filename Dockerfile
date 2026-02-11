@@ -55,17 +55,17 @@ RUN curl -sL https://github.com/cisco/openh264/archive/v${OPENH264_VERSION}.tar.
     make -j5 && make install-shared PREFIX=${PREFIX} && make clean
 
 # 编译 x264 
-WORKDIR /tmp/x264 
-RUN git clone https://code.videolan.org/videolan/x264.git . && \ 
-    ./configure --prefix=${PREFIX} --enable-shared && \ 
-    make -j5 && make install && make clean
+#WORKDIR /tmp/x264 
+#RUN git clone https://code.videolan.org/videolan/x264.git . && \ 
+#    ./configure --prefix=${PREFIX} --enable-shared && \ 
+#    make -j5 && make install && make clean
 
 # 编译 x265
-WORKDIR /tmp/x265
-RUN git clone https://bitbucket.org/multicoreware/x265_git . && \
-    cd build/linux && \
-    cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=${PREFIX} ../../source && \
-    make -j5 && make install && make clean
+#WORKDIR /tmp/x265
+#RUN git clone https://bitbucket.org/multicoreware/x265_git . && \
+#    cd build/linux && \
+#    cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=${PREFIX} ../../source && \
+#    make -j5 && make install && make clean
 
 # 编译 libdav1d (AV1 解码器)
 WORKDIR /tmp/dav1d
@@ -88,7 +88,7 @@ RUN curl -L https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz -o ffmpe
     ls -lh ffmpeg.tar.xz && \
     tar -xJf ffmpeg.tar.xz --strip-components=1 && \
     ./configure --enable-nonfree --enable-gpl --enable-libopenh264 \
-    --enable-libx264 --enable-libx265 \ 
+#    --enable-libx264 --enable-libx265 \ 
     --enable-libdav1d \
     --enable-shared --enable-static --disable-doc  --prefix="${PREFIX}" && \
     make -j5 && make install && make clean
