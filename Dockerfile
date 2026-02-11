@@ -156,6 +156,13 @@ RUN apt-get update && \
 # Install smokescreen
 COPY --from=build-smokescreen /tmp/smokescreen /usr/local/bin/smokescreen
 
+# 把 ffmpeg 和库从 build-image-av 拷贝过来 
+COPY --from=build-image-av /opt/ffmpeg/bin/ffmpeg /usr/local/bin/ 
+COPY --from=build-image-av /opt/ffmpeg/bin/ffprobe /usr/local/bin/ 
+COPY --from=build-image-av /opt/ffmpeg/lib /usr/local/lib 
+# 设置 LD_LIBRARY_PATH 
+ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+
 # Add a non-root user
 ENV USER=${USER}
 ENV HOME /home/${USER}
