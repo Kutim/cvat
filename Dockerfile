@@ -103,7 +103,8 @@ FROM golang:1.25.5 AS build-smokescreen
 RUN git clone --filter=blob:none --no-checkout https://github.com/stripe/smokescreen.git
 RUN cd smokescreen && git checkout eb1ac09 && go build -o /tmp/smokescreen
 
-FROM ${BASE_IMAGE}
+#FROM ${BASE_IMAGE}
+FROM build-image-base
 
 ARG http_proxy
 ARG https_proxy
