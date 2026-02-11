@@ -103,8 +103,7 @@ FROM golang:1.25.5 AS build-smokescreen
 RUN git clone --filter=blob:none --no-checkout https://github.com/stripe/smokescreen.git
 RUN cd smokescreen && git checkout eb1ac09 && go build -o /tmp/smokescreen
 
-#FROM ${BASE_IMAGE}
-FROM build-image-base
+FROM ${BASE_IMAGE}
 
 ARG http_proxy
 ARG https_proxy
@@ -141,6 +140,11 @@ RUN apt-get update && \
         libxml2 \
         libxmlsec1 \
         libxmlsec1-openssl \
+        libmp3lame-dev \
+        libx264-dev \
+        libx265-dev \
+        libvpx-dev \
+        libopus-dev \
         nginx \
         p7zip-full \
         poppler-utils \
