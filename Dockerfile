@@ -11,11 +11,6 @@ RUN apt-get update && \
         git \
         libgeos-dev \
         libldap2-dev \
-        libmp3lame-dev \
-        libx264-dev \
-        libx265-dev \
-        libvpx-dev \
-        libopus-dev \
         libsasl2-dev \
         make \
         nasm \
@@ -27,7 +22,6 @@ RUN apt-get update && \
         libxmlsec1-openssl \
         libhdf5-dev \
         cargo-1.85 \
-        xz-utils \
     && update-alternatives \
         --install /usr/bin/rustc rustc /usr/bin/rustc-1.85 185 \
         --slave /usr/bin/cargo cargo /usr/bin/cargo-1.85 \
@@ -55,8 +49,11 @@ RUN curl -sL https://github.com/cisco/openh264/archive/v${OPENH264_VERSION}.tar.
     make -j5 && make install-shared PREFIX=${PREFIX} && make clean
 
 WORKDIR /tmp/ffmpeg
-
-
+#RUN curl -sL https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz --output - | \
+#    tar -zx --strip-components=1 && \
+#    ./configure --disable-nonfree --disable-gpl --enable-libopenh264 \
+#        --enable-shared --disable-static --disable-doc --disable-programs --prefix="${PREFIX}" && \
+#    make -j5 && make install && make clean
 
 RUN curl -L https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz -o ffmpeg.tar.xz && \ 
     ls -lh ffmpeg.tar.xz && \
@@ -65,8 +62,6 @@ RUN curl -L https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz -o ffmpe
     --enable-libx264 --enable-libx265 \ 
     --enable-shared --enable-static --disable-doc  --prefix="${PREFIX}" && \
     make -j5 && make install && make clean
-    
-
 
 COPY utils/dataset_manifest/requirements.txt /tmp/utils/dataset_manifest/requirements.txt
 
@@ -140,11 +135,6 @@ RUN apt-get update && \
         libxml2 \
         libxmlsec1 \
         libxmlsec1-openssl \
-        libmp3lame-dev \
-        libx264-dev \
-        libx265-dev \
-        libvpx-dev \
-        libopus-dev \
         nginx \
         p7zip-full \
         poppler-utils \
@@ -160,13 +150,6 @@ RUN apt-get update && \
 
 # Install smokescreen
 COPY --from=build-smokescreen /tmp/smokescreen /usr/local/bin/smokescreen
-
-# 把 ffmpeg 和库从 build-image-av 拷贝过来 
-COPY --from=build-image-av /opt/ffmpeg/bin/ffmpeg /usr/local/bin/ 
-COPY --from=build-image-av /opt/ffmpeg/bin/ffprobe /usr/local/bin/ 
-COPY --from=build-image-av /opt/ffmpeg/lib /usr/local/lib 
-# 设置 LD_LIBRARY_PATH 
-ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
 # Add a non-root user
 ENV USER=${USER}
@@ -201,6 +184,8 @@ RUN --mount=type=bind,from=build-image,source=/tmp/wheelhouse,target=/mnt/wheelh
 
 ENV NUMPROCS=1
 COPY --from=build-image-av /opt/ffmpeg/lib /usr/lib
+COPY --from=build-image-av /opt/ffmpeg/bin/ffmpeg /usr/bin/
+COPY --from=build-image-av /opt/ffmpeg/bin/ffprobe /usr/bin/
 
 # These variables are required for supervisord substitutions in files
 # This library allows remote python debugging with VS Code
